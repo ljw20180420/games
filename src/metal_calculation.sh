@@ -11,6 +11,20 @@ random_integer() {
     shuf -i "${low}-${up}" -n 1
 }
 
+handle_answer() {
+    local answer=$1
+    local input=$2
+
+    if [[ "${input}" == "c" || "${input}" -eq "${answer}" ]]
+    then
+        printf "answer: %d\n" ${answer}
+        return 1
+    fi
+
+    printf "wrong\n"
+    return 0
+}
+
 metal_summation() {
     local low=$1
     local up=$2
@@ -22,9 +36,9 @@ metal_summation() {
     while true
     do
         read -p "${A} + ${B}:" D
-        if [[ "${D}" == "c" || "${D}" -eq "${C}" ]]
+        if ! handle_answer ${C} ${D}
         then
-            return 0
+            break
         fi
     done
 }
