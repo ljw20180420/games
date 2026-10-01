@@ -1,9 +1,10 @@
 #!/bin/bash
 
 . src/metal_calculation.sh
+. src/m_cards_n_points.sh
 
 main() {
-    games=("metal")
+    local -a games=("metal" "MCNP")
     select game in "${games[@]}"
     do
         if [[ "${game}" ]]

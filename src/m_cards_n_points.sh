@@ -49,14 +49,16 @@ set_diff() {
     local item
     for item in "${_ref_arr2[@]}"
     do
-        seen["${item}"]=1
+        (( seen["${item}"]++ ))
     done
 
     local -a difference
     for item in "${_ref_arr1[@]}"; do
-        if [[ -z "${seen["${item}"]}" ]]; then
-            difference+=("${item}")
+        if [[ "${seen["${item}"]}" -gt 0 ]]; then
+            (( seen["${item}"]-- ))
+            continue
         fi
+        difference+=("${item}")
     done
 
     echo "${difference[@]}"
@@ -66,6 +68,8 @@ enumerate_half() {
     local N=$#
     if (( N < 2 ))
     then
+        echo ${N} >&2
+        echo "$@" >&2
         echo "input parameter must be more than 2" >&2
         exit 1
     elif (( N == 2 ))
@@ -142,4 +146,83 @@ enumerate_formula() {
     done < <(
         enumerate_half "$@"
     )
+}
+
+evaluate_anwser() {
+    local anwser=$1
+
+    printf "scale = 4\n%s\n" "${anwser}" |
+    bc 2> /dev/null
+}
+
+approximate_equal() {
+    local v1=$1
+    local v2=$2
+
+    if [[ -z "${v1}" || -z "${v2}" ]]
+    then
+        echo 0
+        return 0
+    fi
+
+    printf "%s - %s < 0.01 && %s - %s > -0.01\n" ${v1} ${v2} ${v1} ${v2} | bc -l
+}
+
+MCNP() {
+    local -a points=("24" "60")
+    select point in "${points[@]}"
+    do
+        if [[ "${point}" ]]
+        then
+            break
+        fi
+    done
+    case "${point}" in
+        "24")
+            local card_num=4
+            ;;
+        "60")
+            local card_num=5
+            ;;
+    esac
+
+    local -a arr
+    while true
+    do
+        mapfile -t arr < <(select_cards "${card_num}")
+        local anwser
+        local anwser_point
+        while read anwser
+        do
+            anwser_point="$(evaluate_anwser "${anwser}")"
+            if (( "$(approximate_equal "${anwser_point}" "${point}")" ))
+            then
+                break
+            fi 
+        done < <(
+            enumerate_formula "${arr[@]}" | shuf
+        )
+        if (( ! "$(approximate_equal "${anwser_point}" "${point}")" ))
+        then
+            continue
+        fi
+
+        local input
+        local input_point
+        while true
+        do
+            read -p "${arr[*]}: " input
+            if [[ "${input}" == "c" ]]
+            then
+                printf "%s = %d\n" "${anwser}" "${point}"
+                break
+            fi
+            input_point="$(evaluate_anwser "${input}")"
+            if (( input_point == point ))
+            then
+                printf "%s = %d\n" "${input}" "${point}"
+                break
+            fi
+        done
+    done
 }

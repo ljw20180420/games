@@ -129,7 +129,8 @@ read_number() {
 }
 
 metal() {
-    operations=("+" "-" "*" "/")
+    local -a operations=("+" "-" "*" "/")
+    local operation
     select operation in "${operations[@]}"
     do
         if [[ "${operation}" ]]
