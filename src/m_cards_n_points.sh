@@ -148,10 +148,10 @@ enumerate_formula() {
     )
 }
 
-evaluate_anwser() {
-    local anwser=$1
+evaluate_answer() {
+    local answer=$1
 
-    printf "scale = 4\n%s\n" "${anwser}" |
+    printf "scale = 4\n%s\n" "${answer}" |
     bc 2> /dev/null
 }
 
@@ -190,19 +190,19 @@ MCNP() {
     while true
     do
         mapfile -t arr < <(select_cards "${card_num}")
-        local anwser
-        local anwser_point
-        while read anwser
+        local answer
+        local answer_point
+        while read answer
         do
-            anwser_point="$(evaluate_anwser "${anwser}")"
-            if (( "$(approximate_equal "${anwser_point}" "${point}")" ))
+            answer_point="$(evaluate_answer "${answer}")"
+            if (( "$(approximate_equal "${answer_point}" "${point}")" ))
             then
                 break
             fi 
         done < <(
             enumerate_formula "${arr[@]}" | shuf
         )
-        if (( ! "$(approximate_equal "${anwser_point}" "${point}")" ))
+        if (( ! "$(approximate_equal "${answer_point}" "${point}")" ))
         then
             continue
         fi
@@ -211,13 +211,13 @@ MCNP() {
         local input_point
         while true
         do
-            read -p "${arr[*]}: " input
+            read -p "${arr[*]} (c to show answer): " input
             if [[ "${input}" == "c" ]]
             then
-                printf "%s = %d\n" "${anwser}" "${point}"
+                printf "%s = %d\n" "${answer}" "${point}"
                 break
             fi
-            input_point="$(evaluate_anwser "${input}")"
+            input_point="$(evaluate_answer "${input}")"
             if (( input_point == point ))
             then
                 printf "%s = %d\n" "${input}" "${point}"

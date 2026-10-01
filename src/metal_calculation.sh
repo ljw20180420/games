@@ -37,7 +37,7 @@ metal_summation() {
 
         while true
         do
-            read -p "${A} + ${B}:" D
+            read -p "${A} + ${B} (c to show answer): " D
             if ! handle_answer ${C} ${D}
             then
                 break
@@ -64,7 +64,7 @@ metal_substraction() {
 
         while true
         do
-            read -p "${A} - ${B}:" D
+            read -p "${A} - ${B} (c to show answer): " D
             if ! handle_answer ${C} ${D}
             then
                 break
@@ -85,7 +85,7 @@ metal_multiplication() {
 
         while true
         do
-            read -p "${A} * ${B}:" D
+            read -p "${A} * ${B} (c to show answer): " D
             if ! handle_answer ${C} ${D}
             then
                 break
@@ -106,7 +106,7 @@ metal_division() {
 
         while true
         do
-            read -p "${A} / ${B}:" D
+            read -p "${A} / ${B} (c to show answer): " D
             if ! handle_answer ${C} ${D}
             then
                 break
