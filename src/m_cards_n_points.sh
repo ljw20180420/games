@@ -211,7 +211,7 @@ MCNP() {
         local input_point
         while true
         do
-            read -p "${arr[*]} (c to show answer): " input
+            read -ep "${arr[*]} (c to show answer): " input
             if [[ "${input}" == "c" ]]
             then
                 printf "%s = %d\n" "${answer}" "${point}"
