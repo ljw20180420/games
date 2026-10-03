@@ -1,4 +1,4 @@
-select_cards() {
+MCNP__select_cards() {
     local num=$1
 
     local i
@@ -13,7 +13,7 @@ select_cards() {
     shuf -n ${num}
 }
 
-N_choose_K() {
+MCNP__N_choose_K() {
     local K=$1
     shift    
     local N=$#
@@ -37,11 +37,11 @@ N_choose_K() {
         while read line
         do
             printf "%d %s\n" "${num}" "${line}"
-        done < <(N_choose_K $(( K - 1 )) "$@")
+        done < <(MCNP__N_choose_K $(( K - 1 )) "$@")
     done
 }
 
-set_diff() {
+MCNP__set_diff() {
     local -n _ref_arr1=$1
     local -n _ref_arr2=$2
     local -A seen
@@ -64,7 +64,7 @@ set_diff() {
     echo "${difference[@]}"
 }
 
-enumerate_half() {
+MCNP__enumerate_half() {
     local N=$#
     if (( N < 2 ))
     then
@@ -80,7 +80,7 @@ enumerate_half() {
     local K
     for (( K = 1; K <= (N - 1) / 2; ++K ))
     do
-        N_choose_K "${K}" "$@"
+        MCNP__N_choose_K "${K}" "$@"
     done
     (( K = N / 2 ))
     if (( 2 * K == N ))
@@ -92,12 +92,12 @@ enumerate_half() {
         do
             printf "%d %s\n" "${num}" "${line}"
         done < <(
-            N_choose_K $(( K - 1 )) "$@"
+            MCNP__N_choose_K $(( K - 1 )) "$@"
         )
     fi
 }
 
-enumerate_formula() {
+MCNP__enumerate_formula() {
     local N="$#"
     local arr=("$@")
 
@@ -111,7 +111,7 @@ enumerate_formula() {
     while read line
     do
         local arr1=($line)
-        local arr2=($(set_diff arr arr1))
+        local arr2=($(MCNP__set_diff arr arr1))
 
         if [[ "${#arr1[@]}" -gt 1 ]]
         then
@@ -138,24 +138,24 @@ enumerate_formula() {
                     printf "${left_pat} %s ${right_pat}\n" "${line1}" "${op}" "${line2}"
                 done
             done < <(
-                enumerate_formula "${arr2[@]}"    
+                MCNP__enumerate_formula "${arr2[@]}"    
             )
         done < <(
-            enumerate_formula "${arr1[@]}"
+            MCNP__enumerate_formula "${arr1[@]}"
         )
     done < <(
-        enumerate_half "$@"
+        MCNP__enumerate_half "$@"
     )
 }
 
-evaluate_answer() {
+MCNP__evaluate_answer() {
     local answer=$1
 
     printf "scale = 4\n%s\n" "${answer}" |
     bc 2> /dev/null
 }
 
-approximate_equal() {
+MCNP__approximate_equal() {
     local v1=$1
     local v2=$2
 
@@ -168,7 +168,7 @@ approximate_equal() {
     printf "%s - %s < 0.01 && %s - %s > -0.01\n" ${v1} ${v2} ${v1} ${v2} | bc -l
 }
 
-MCNP() {
+MCNP__main() {
     local -a points=("24" "60")
     select point in "${points[@]}"
     do
@@ -189,20 +189,20 @@ MCNP() {
     local -a arr
     while true
     do
-        mapfile -t arr < <(select_cards "${card_num}")
+        mapfile -t arr < <(MCNP__select_cards "${card_num}")
         local answer
         local answer_point
         while read answer
         do
-            answer_point="$(evaluate_answer "${answer}")"
-            if (( "$(approximate_equal "${answer_point}" "${point}")" ))
+            answer_point="$(MCNP__evaluate_answer "${answer}")"
+            if (( "$(MCNP__approximate_equal "${answer_point}" "${point}")" ))
             then
                 break
             fi 
         done < <(
-            enumerate_formula "${arr[@]}" | shuf
+            MCNP__enumerate_formula "${arr[@]}" | shuf
         )
-        if (( ! "$(approximate_equal "${answer_point}" "${point}")" ))
+        if (( ! "$(MCNP__approximate_equal "${answer_point}" "${point}")" ))
         then
             continue
         fi
@@ -217,7 +217,7 @@ MCNP() {
                 printf "%s = %d\n" "${answer}" "${point}"
                 break
             fi
-            input_point="$(evaluate_answer "${input}")"
+            input_point="$(MCNP__evaluate_answer "${input}")"
             if (( input_point == point ))
             then
                 printf "%s = %d\n" "${input}" "${point}"

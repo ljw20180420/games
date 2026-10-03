@@ -1,8 +1,8 @@
 #!/bin/bash
 
-. src/metal_calculation.sh
-. src/m_cards_n_points.sh
-. src/piano.sh
+. src/metal_calculation/lib.sh
+. src/m_cards_n_points/lib.sh
+. src/piano/lib.sh
 
 main() {
     local -a games=("metal" "MCNP" "piano")
@@ -13,7 +13,7 @@ main() {
             break
         fi
     done
-    "${game}"
+    "${game}__main"
 }
 
 main

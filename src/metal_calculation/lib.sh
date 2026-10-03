@@ -1,4 +1,4 @@
-random_integer() {
+metal__random_integer() {
     local low=$1
     local up=$2
 
@@ -11,7 +11,7 @@ random_integer() {
     shuf -i "${low}-${up}" -n 1
 }
 
-handle_answer() {
+metal__handle_answer() {
     local answer=$1
     local input=$2
 
@@ -25,20 +25,20 @@ handle_answer() {
     return 0
 }
 
-metal_summation() {
+metal__summation() {
     local low=$1
     local up=$2
 
     while true
     do
-        local A=$(random_integer ${low} ${up})
-        local B=$(random_integer ${low} ${up})
+        local A=$(metal__random_integer ${low} ${up})
+        local B=$(metal__random_integer ${low} ${up})
         local C=$((A + B))
 
         while true
         do
             read -ep "${A} + ${B} (c to show answer): " D
-            if ! handle_answer ${C} ${D}
+            if ! metal__handle_answer ${C} ${D}
             then
                 break
             fi
@@ -46,14 +46,14 @@ metal_summation() {
     done
 }
 
-metal_substraction() {
+metal__substraction() {
     local low=$1
     local up=$2
 
     while true
     do
-        local A=$(random_integer ${low} ${up})
-        local B=$(random_integer ${low} ${up})
+        local A=$(metal__random_integer ${low} ${up})
+        local B=$(metal__random_integer ${low} ${up})
         if [[ "${A}" -lt "${B}" ]]
         then
             local temp="${A}"
@@ -65,7 +65,7 @@ metal_substraction() {
         while true
         do
             read -ep "${A} - ${B} (c to show answer): " D
-            if ! handle_answer ${C} ${D}
+            if ! metal__handle_answer ${C} ${D}
             then
                 break
             fi
@@ -73,20 +73,20 @@ metal_substraction() {
     done
 }
 
-metal_multiplication() {
+metal__multiplication() {
     local low=$1
     local up=$2
 
     while true
     do
-        local A=$(random_integer ${low} ${up})
-        local B=$(random_integer ${low} ${up})
+        local A=$(metal__random_integer ${low} ${up})
+        local B=$(metal__random_integer ${low} ${up})
         local C=$((A * B))
 
         while true
         do
             read -ep "${A} * ${B} (c to show answer): " D
-            if ! handle_answer ${C} ${D}
+            if ! metal__handle_answer ${C} ${D}
             then
                 break
             fi
@@ -94,20 +94,20 @@ metal_multiplication() {
     done    
 }
 
-metal_division() {
+metal__division() {
     local low=$1
     local up=$2
 
     while true
     do
-        local B=$(random_integer ${low} ${up})
-        local C=$(random_integer ${low} ${up})
+        local B=$(metal__random_integer ${low} ${up})
+        local C=$(metal__random_integer ${low} ${up})
         local A=$((B * C))
 
         while true
         do
             read -ep "${A} / ${B} (c to show answer): " D
-            if ! handle_answer ${C} ${D}
+            if ! metal__handle_answer ${C} ${D}
             then
                 break
             fi
@@ -115,7 +115,7 @@ metal_division() {
     done    
 }
 
-read_number() {
+metal__read_number() {
     local var=$1
     local temp
     while true
@@ -128,7 +128,7 @@ read_number() {
     echo "${temp}"
 }
 
-metal() {
+metal__main() {
     local -a operations=("+" "-" "*" "/")
     local operation
     select operation in "${operations[@]}"
@@ -141,8 +141,8 @@ metal() {
 
     while true
     do
-        local low=$(read_number low)
-        local up=$(read_number up)
+        local low=$(metal__read_number low)
+        local up=$(metal__read_number up)
         if [[ "${low}" -le "${up}" ]]
         then
             break
@@ -152,16 +152,16 @@ metal() {
 
     case "${operation}" in
         "+")
-            metal_summation "${low}" "${up}"
+            metal__summation "${low}" "${up}"
             ;;
         "-")
-            metal_substraction "${low}" "${up}"
+            metal__substraction "${low}" "${up}"
             ;;
         "*")
-            metal_multiplication "${low}" "${up}"
+            metal__multiplication "${low}" "${up}"
             ;;
         "/")
-            metal_division "${low}" "${up}"
+            metal__division "${low}" "${up}"
             ;;
     esac
 }
