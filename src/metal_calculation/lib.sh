@@ -129,9 +129,8 @@ metal__read_number() {
 }
 
 metal__main() {
-    local -a operations=("+" "-" "*" "/")
     local operation
-    select operation in "${operations[@]}"
+    select operation in "+" "-" "*" "/"
     do
         if [[ "${operation}" ]]
         then

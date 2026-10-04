@@ -169,8 +169,8 @@ MCNP__approximate_equal() {
 }
 
 MCNP__main() {
-    local -a points=("24" "60")
-    select point in "${points[@]}"
+    local point
+    select point in "24" "60"
     do
         if [[ "${point}" ]]
         then
