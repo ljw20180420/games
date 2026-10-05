@@ -1,6 +1,5 @@
 #!/bin/bash
 
-while read -n1 a
-do
-    true
-done
+. src/tileup_cancel/lib.sh
+
+tileup__main
